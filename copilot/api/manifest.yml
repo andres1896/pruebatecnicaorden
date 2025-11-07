@@ -1,0 +1,44 @@
+# El manifiesto para el servicio "api"
+# Para más detalles sobre el tipo "Load Balanced Web Service" en AWS Copilot, consulta:
+# https://aws.github.io/copilot-cli/docs/manifest/lb-web-service/
+
+name: api  # Nombre del servicio
+type: Load Balanced Web Service  # Tipo de servicio: Web service balanceado por carga (ALB)
+
+# Configuración de la ruta HTTP y health check
+http:
+  path: '/'  # Ruta a la que el Load Balancer redirige el tráfico
+  healthcheck: '/health'  # Ruta del endpoint de salud para verificar el estado de la aplicación
+
+# Configuración para las imágenes del contenedor y el puerto de exposición
+image:
+  build: Dockerfile  # Usa el Dockerfile en el directorio actual para construir la imagen
+  port: 8080         # Puerto que el contenedor expondrá para recibir tráfico HTTP
+
+# Recursos asignados al servicio
+cpu: 256      # Unidades de CPU asignadas al contenedor
+memory: 512   # Memoria (MiB) asignada al contenedor
+count: 1      # Número de tareas que deberían estar corriendo en el servicio
+
+# Habilita la ejecución de comandos en el contenedor (opcional)
+exec: true
+
+# Configuración de red para permitir la comunicación entre servicios
+network:
+  connect: true  # Habilita Service Connect para la comunicación entre servicios dentro del entorno
+
+# Opcionalmente, puedes agregar variables de entorno y secretos para el contenedor
+# Si tu aplicación necesita variables o secretos, descomenta y agrega los valores correspondientes
+# variables:
+#   LOG_LEVEL: info
+# secrets:
+#   GITHUB_TOKEN: GITHUB_TOKEN  # Ejemplo para utilizar un secreto de AWS SSM
+
+# Configuración avanzada para los entornos
+# Aquí puedes definir valores específicos por entorno (por ejemplo, test, prod)
+# Si quieres tener diferentes configuraciones por entorno, descomenta y personaliza según sea necesario
+# environments:
+#   test:
+#     count: 2           # Número de tareas a ejecutar en el entorno de test
+#     deployment:        # Estrategia de despliegue para el entorno de test
+#       rolling: 'recreate'  # Detener tareas existentes antes de iniciar nuevas tareas para despliegues más rápidos
